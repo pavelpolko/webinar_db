@@ -24,23 +24,53 @@ CREATE TABLE profiles (
   gender CHAR(1) NOT NULL COMMENT "Пол",
   birthday DATE COMMENT "Дата рождения",
   photo_id INT UNSIGNED COMMENT "Ссылка на основную фотографию пользователя",
-  city VARCHAR(130) COMMENT "Город проживания",
-  country VARCHAR(130) COMMENT "Страна проживания",
+  city_id INT UNSIGNED NOT NULL COMMENT "Город проживания",
+  country_id INT UNSIGNED NOT NULL COMMENT "Страна проживания",
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT "Время создания строки",  
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT "Время обновления строки"
 ) COMMENT "Профили"; 
+
+-- Таблица городов
+CREATE TABLE cities (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT "Идентификатор строки",
+  name VARCHAR(150) NOT NULL UNIQUE COMMENT "Название города",
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT "Время создания строки",  
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT "Время обновления строки"  
+) COMMENT "Города";
+
+-- Таблица стран
+CREATE TABLE countries (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT "Идентификатор строки",
+  name VARCHAR(150) NOT NULL UNIQUE COMMENT "Название страны",
+  code_letter VARCHAR(3) NOT NULL UNIQUE COMMENT "Буквенный код",
+  code_numeric INT NOT NULL COMMENT "Числовой код",
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT "Время создания строки",  
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT "Время обновления строки"  
+) COMMENT "Страны";
 
 -- Таблица сообщений
 CREATE TABLE messages (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT "Идентификатор строки", 
   from_user_id INT UNSIGNED NOT NULL COMMENT "Ссылка на отправителя сообщения",
   to_user_id INT UNSIGNED NOT NULL COMMENT "Ссылка на получателя сообщения",
+  answer_id INT COMMENT "Ссылка на сообщение, ответ на другое сообщение",
   body TEXT NOT NULL COMMENT "Текст сообщения",
   is_important BOOLEAN COMMENT "Признак важности",
   is_delivered BOOLEAN COMMENT "Признак доставки",
+  is_viewed BOOLEAN COMMENT "Признак просмотра",
+  delivered_at DATETIME COMMENT "Время доставки",
+  viewed_at DATETIME COMMENT "Время просмотра",
   created_at DATETIME DEFAULT NOW() COMMENT "Время создания строки",
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT "Время обновления строки"
 ) COMMENT "Сообщения";
+
+-- Таблица связи сообщений и медиафайлов
+CREATE TABLE messages_media (
+  message_id INT UNSIGNED NOT NULL COMMENT "Ссылка на сообщение",
+  media_id INT UNSIGNED NOT NULL COMMENT "Ссылка на медиафайл",
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT "Время создания строки", 
+  PRIMARY KEY (message_id, media_id) COMMENT "Составной первичный ключ"
+) COMMENT "Медиафайлы в сообщении пользователя, связь между сообщениями и медиафайлами";
 
 -- Таблица дружбы
 CREATE TABLE friendship (
